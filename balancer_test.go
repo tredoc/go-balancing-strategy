@@ -65,7 +65,7 @@ func TestBalancer_NextNode(t *testing.T) {
 		assert.Equal(t, nextNode, s1, "first node")
 	})
 
-	t.Run("test round robin strategy on six nodes", func(t *testing.T) {
+	t.Run("test round robin strategy on 1000 nodes", func(t *testing.T) {
 		s1 := getNewRandomNode()
 		s2 := getNewRandomNode()
 		s3 := getNewRandomNode()
@@ -75,7 +75,7 @@ func TestBalancer_NextNode(t *testing.T) {
 		counter := NewRoundRobinStrategy()
 
 		var wg sync.WaitGroup
-		count := 6
+		count := 1000
 		wg.Add(count)
 
 		for i := 0; i < count; i++ {

@@ -48,20 +48,14 @@ func (r RandomStrategy) Next(length int) int {
 }
 
 type RoundRobinStrategy struct {
-	currentIdx atomic.Int64
+	counter uint64
 }
 
 func NewRoundRobinStrategy() *RoundRobinStrategy {
 	return &RoundRobinStrategy{}
 }
 
-func (rr *RoundRobinStrategy) Next(length int) int {
-	current := rr.currentIdx.Load()
-	if int(current) >= length-1 {
-		rr.currentIdx.CompareAndSwap(current, 0)
-		return int(rr.currentIdx.Load())
-	}
-
-	rr.currentIdx.CompareAndSwap(current, current+1)
-	return int(rr.currentIdx.Load())
+func (rr RoundRobinStrategy) Next(length int) int {
+	next := atomic.AddUint64(&rr.counter, 1)
+	return int(next) % length
 }
