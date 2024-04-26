@@ -89,4 +89,27 @@ func TestBalancer_NextNode(t *testing.T) {
 
 		wg.Wait()
 	})
+
+	t.Run("test round robin strategy on single node", func(t *testing.T) {
+		s1 := getNewRandomNode()
+
+		list := []*Node{s1}
+		balancer := NewBalancer(list, NewRoundRobinStrategy())
+		counter := NewRoundRobinStrategy()
+
+		var wg sync.WaitGroup
+		count := 1000
+		wg.Add(count)
+
+		for i := 0; i < count; i++ {
+			go func() {
+				defer wg.Done()
+				nextNode := balancer.NextNode()
+				c := counter.Next(len(list))
+				assert.Equal(t, nextNode, list[c], i)
+			}()
+		}
+
+		wg.Wait()
+	})
 }
